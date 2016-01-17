@@ -1,0 +1,27 @@
+/* CSS declarations go here */
+*{
+    margin: 0;
+}
+
+#content { margin: 0 auto; padding: 0 1em; max-width: 800px; position: relative; width: 61.8%;}
+
+h1 {
+    font-size: 1em;
+}
+
+h3 {
+    font-size: .8em;
+}
+
+div.cpc-container {
+    width: 150px;
+    height: 120px;
+    border: 1px dashed red;
+    float: left;
+    margin: 10px;
+}
+
+.map {
+  width: 800px;
+  height: 600px;
+}
