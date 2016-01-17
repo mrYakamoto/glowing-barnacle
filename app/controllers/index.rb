@@ -1,4 +1,3 @@
-
 # GOOGLE API KEY
 # AIzaSyDBsnO1kJI8VpBFeRTSQjVXykPPpWGtJAY
 
@@ -34,10 +33,6 @@ get '/clinicsLocations' do
 end
 
 put '/saveLatLng/:id/:lat/:lng' do
-  p "PARAMS"
-  p "PARAMS"
-  p "PARAMS"
-  p params
   clinic = Clinic.find(params[:id])
   p
   clinic.lat = params[:lat].to_f.round(8)
@@ -48,17 +43,3 @@ put '/saveLatLng/:id/:lat/:lng' do
     return "FAILED"
   end
 end
-
-
-
-
-
-
-
-# get '/login' do
-
-# end
-
-# get '/signup' do
-
-# end
