@@ -34,7 +34,7 @@ end
 
 put '/saveLatLng/:id/:lat/:lng' do
   clinic = Clinic.find(params[:id])
-  p
+  p params
   clinic.lat = params[:lat].to_f.round(8)
   clinic.lng = params[:lng].to_f.round(8)
   if clinic.save

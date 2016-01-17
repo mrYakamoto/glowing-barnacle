@@ -1,7 +1,7 @@
 $(document).ready(function() {
 
-
   initMap();
+
 });
 
 
@@ -32,7 +32,8 @@ function initMap(clinicObj){
       var clinicCount = arrayClinicObjects.length;
       // console.log(clinicCount);
 
-      for (var i=0; i < clinicCount; i++){
+      // for (var i=1; i < clinicCount; i++){
+      for (var i=1; i < 11; i++){
         if ((arrayClinicObjects[i].lat)&&(arrayClinicObjects[i].lng)){
           console.log("INSIDE IF");
 
