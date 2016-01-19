@@ -40,6 +40,6 @@ put '/saveLatLng/:id/:lat/:lng' do
   if clinic.save
     return "SAVED"
   else
-    return "FAILED"
+    return "FAILED TO SAVE"
   end
 end

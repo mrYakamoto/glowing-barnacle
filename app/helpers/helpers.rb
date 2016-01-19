@@ -7,10 +7,9 @@ helpers do
         state_page_parser(state_page)
       end
   end
-  # def life_call_parser_cpcs
-  #   state_page = Nokogiri::HTML(open("http://www.lifecall.org/cpc/#{state_names_in_array[24]}.html"))
-  #   state_page_parser(state_page)
-  # end
+
+
+
 
   def state_page_parser(state_page)
     state_page_clinics_div_html = state_page.css( 'div.panes div p')
@@ -44,8 +43,8 @@ helpers do
         name = remove_whitespace(p_tag.children[0])
         full_address = "#{remove_whitespace(p_tag.children[1])}, #{remove_whitespace(p_tag.children[2])}"
         address = remove_whitespace(p_tag.children[1])
-        city = remove_whitespace(p_tag.children[2]).match(/^\w*/)
-        zip = remove_whitespace(p_tag.children[2]).match(/[\d]/)
+        city = remove_whitespace(p_tag.children[2]).match(/.+?(?=,)/)
+        zip = remove_whitespace(p_tag.children[2]).match(/\d{5}/)
 
         new_clinic = Clinic.new
         new_clinic.name = name
@@ -68,7 +67,7 @@ helpers do
     node_text.sub!(/^\s*/, "")
     node_text.sub!(/(\\t|\\r|\\n|\s)*$/, "")
     node_text.gsub!("/", " ")
-    node_text.gsub!(/[#'&½’"¼]/, "")
+    node_text.gsub!(/[#'&½’"¼-]/, "")
     node_text.gsub(/\s\s/, " ")
   end
 

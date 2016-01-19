@@ -6,105 +6,157 @@ $(document).ready(function() {
 
 
 function initMap(clinicObj){
-  var mapCanvas = document.getElementById('map');
+  var customMapType = new google.maps.StyledMapType([
+      {
+        stylers: [
+          {hue: '#890000'},
+          {visibility: 'simplified'},
+          {gamma: 0.5},
+          {weight: 0.5}
+        ]
+      },
+      {
+        elementType: 'labels',
+        stylers: [{visibility: 'off'}]
+      },
+      {
+        featureType: 'water',
+        stylers: [{color: '#890000'}]
+      }
+    ], {
+      name: 'Custom Style'
+  });
+  var customMapTypeId = 'custom_style';
 
-  var mapOptions = {
+  var map = new google.maps.Map(document.getElementById('map'), {
     zoom: 4,
     center: new google.maps.LatLng(37.09024, -95.712891),
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-  };
-  var map = new google.maps.Map(mapCanvas, mapOptions);
+    mapTypeControlOptions: {
+      mapTypeIds: [google.maps.MapTypeId.ROADMAP, customMapTypeId]
+    }
+  });
 
-  getAllClinicsInfo();
+  map.mapTypes.set(customMapTypeId, customMapType);
+  map.setMapTypeId(customMapTypeId);
+
+
+  // getAllClinicsInfo();
+  loadFromDB();
+
+  // var image = 'http://i65.tinypic.com/c3ktf.jpg';
 
   function createMarker(clinicObj){
     var clinicLoc = { lat: clinicObj.lat, lng: clinicObj.lng };
     var marker = new google.maps.Marker({
       position: clinicLoc,
       map: map,
+      // animation: google.maps.Animation.DROP,
       title: clinicObj.name,
+      // icon: image
     });
   }
 
-  function getAllClinicsInfo(){
+
+// function to retrieve geolocation data from already formed DB
+  function loadFromDB(){
     $.get("/clinicsLocations", function(response){
-      arrayClinicObjects = jQuery.parseJSON(response);
+      var arrayClinicObjects = jQuery.parseJSON(response);
       var clinicCount = arrayClinicObjects.length;
-      // console.log(clinicCount);
 
-      // for (var i=1; i < clinicCount; i++){
-      for (var i=1; i < 11; i++){
-        if ((arrayClinicObjects[i].lat)&&(arrayClinicObjects[i].lng)){
-          console.log("INSIDE IF");
+      for (var i=1; i < clinicCount; i++){
+        console.log("FOR");
 
-          arrayClinicObjects[i].lat = parseFloat(arrayClinicObjects[i].lat)
+        arrayClinicObjects[i].lat = parseFloat(arrayClinicObjects[i].lat)
+        arrayClinicObjects[i].lng = parseFloat(arrayClinicObjects[i].lng)
 
-          arrayClinicObjects[i].lng = parseFloat(arrayClinicObjects[i].lng)
-          // console.log(arrayClinicObjects[i]);
-          createMarker(arrayClinicObjects[i]);
-        }
-        else {
-          console.log("INSIDE ELSE");
-          latLngData(arrayClinicObjects[i]);
-        }
-
+        createMarker(arrayClinicObjects[i]);
       }
-    });
+    })
   }
 
-  function clinicNameAndAddress(id){
-    $.ajax({
-      type: 'GET',
-      url: "/clinics/"+id+"/data"
-    })
-    .done(function(response){
-      // console.log(response);
-      var clinicObj = jQuery.parseJSON(response);
-      // console.log(clinicObj);
 
-    })
-    .fail(function(xhr,unknown,error){
-      alert(error);
-    });
-  }
+  // // functions to get and save geolocation coordinates below here
+  // function getAllClinicsInfo(){
+  //   $.get("/clinicsLocations", function(response){
+  //     console.log(response);
+  //     var arrayClinicObjects = jQuery.parseJSON(response);
+  //     console.log(arrayClinicObjects);
+  //     var clinicCount = arrayClinicObjects.length;
+  //     // console.log(clinicCount);
 
-  function latLngData(clinicObj){
-    $.ajax({
-      type: 'GET',
-      url: "/geolocate/"+clinicObj.name+"/"+clinicObj.full_address,
-    })
-    .done(function(response){
-      console.log("latLngData RESPONSE");
-    // console.log(response);
-    var parsedGeoResponse = jQuery.parseJSON(response);
-    clinicObj.lat = parsedGeoResponse.results[0].geometry.location.lat;
-    clinicObj.lng = parsedGeoResponse.results[0].geometry.location.lng;
-    saveLatLngData(clinicObj);
-  })
-    .fail(function(xhr,unknown,error){
-      alert(error);
-    });
-  }
+  //     for (var i=1; i < clinicCount; i++){
+  //       // for (var i=1; i < 5; i++){
+  //         if ((arrayClinicObjects[i].lat)&&(arrayClinicObjects[i].lng)){
+  //           console.log("INSIDE IF");
 
-  function saveLatLngData(clinicObj){
-    clinicInfo = {};
-    clinicInfo.id = clinicObj.id;
-    clinicInfo.lat = clinicObj.lat;
-    clinicInfo.lng = clinicObj.lng;
-    $.ajax({
-      type: 'PUT',
-      url: "/saveLatLng/"+clinicInfo.id+"/"+clinicInfo.lat+"/"+clinicInfo.lng
-    })
-    .done(function(response){
-      console.log("saveLatLngData RESPONSE");
-      console.log(response);
-      createMarker(clinicObj);
-    })
-    .fail(function(xhr,unknown,error){
-      alert(error);
-    });
+  //           arrayClinicObjects[i].lat = parseFloat(arrayClinicObjects[i].lat)
 
-  }
+  //           arrayClinicObjects[i].lng = parseFloat(arrayClinicObjects[i].lng)
+  //         // console.log(arrayClinicObjects[i]);
+  //         createMarker(arrayClinicObjects[i]);
+  //       }
+  //       else {
+  //         console.log("INSIDE ELSE");
+  //         latLngData(arrayClinicObjects[i]);
+  //       }
+
+  //     }
+  //   });
+  // }
+
+  // function clinicNameAndAddress(id){
+  //   $.ajax({
+  //     type: 'GET',
+  //     url: "/clinics/"+id+"/data"
+  //   })
+  //   .done(function(response){
+  //     // console.log(response);
+  //     var clinicObj = jQuery.parseJSON(response);
+  //     // console.log(clinicObj);
+
+  //   })
+  //   .fail(function(xhr,unknown,error){
+  //     alert(error);
+  //   });
+  // }
+
+  // function latLngData(clinicObj){
+  //   $.ajax({
+  //     type: 'GET',
+  //     url: "/geolocate/"+clinicObj.name+"/"+clinicObj.full_address,
+  //   })
+  //   .done(function(response){
+  //     console.log("latLngData RESPONSE");
+  //   // console.log(response);
+  //   var parsedGeoResponse = jQuery.parseJSON(response);
+  //   clinicObj.lat = parsedGeoResponse.results[0].geometry.location.lat;
+  //   clinicObj.lng = parsedGeoResponse.results[0].geometry.location.lng;
+  //   saveLatLngData(clinicObj);
+  // })
+  //   .fail(function(xhr,unknown,error){
+  //     alert(error);
+  //   });
+  // }
+
+  // function saveLatLngData(clinicObj){
+  //   clinicInfo = {};
+  //   clinicInfo.id = clinicObj.id;
+  //   clinicInfo.lat = clinicObj.lat;
+  //   clinicInfo.lng = clinicObj.lng;
+  //   $.ajax({
+  //     type: 'PUT',
+  //     url: "/saveLatLng/"+clinicInfo.id+"/"+clinicInfo.lat+"/"+clinicInfo.lng
+  //   })
+  //   .done(function(response){
+  //     console.log("saveLatLngData RESPONSE");
+  //     console.log(response);
+  //     createMarker(clinicObj);
+  //   })
+  //   .fail(function(xhr,unknown,error){
+  //     alert(error);
+  //   });
+
+  // }
 
 
 }
